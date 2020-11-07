@@ -5,6 +5,10 @@ import '../models/meal.dart';
 class MealDetailScreen extends StatelessWidget {
   static const routeName = '/mealDetailScreen';
 
+  final Function toggleFavorite;
+  final Function isFavorite;
+  MealDetailScreen(this.toggleFavorite, this.isFavorite);
+
   Widget buildTilteTile({BuildContext context, String text}) {
     return Container(
       margin: EdgeInsets.symmetric(
@@ -35,7 +39,7 @@ class MealDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(15)),
       ),
       height: 300,
-      width: 300,
+      width: MediaQuery.of(context).size.width - 120,
       child: child,
     );
   }
@@ -49,61 +53,73 @@ class MealDetailScreen extends StatelessWidget {
         title: Text(selectedMeal.title),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-              height: 300,
-              width: double.infinity,
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(15),
-                ),
-                child: Image.network(
-                  selectedMeal.imageUrl,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            buildTilteTile(
-              context: context,
-              text: 'Ingredients',
-            ),
-            buildContainer(
-              context: context,
-              child: ListView.builder(
-                itemCount: selectedMeal.ingredients.length,
-                itemBuilder: (context, index) => ListTile(
-                  title: Text('${selectedMeal.ingredients[index]}'),
-                  leading: Icon(
-                    Icons.arrow_right,
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            children: [
+              Container(
+                // padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                height: 300,
+                width: double.infinity,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(15),
+                  ),
+                  child: Image.network(
+                    selectedMeal.imageUrl,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
-            ),
-            buildTilteTile(context: context, text: 'Steps'),
-            buildContainer(
-              context: context,
-              child: ListView.builder(
-                itemCount: selectedMeal.steps.length,
-                itemBuilder: (context, index) => Column(
-                  children: [
-                    ListTile(
-                      leading: CircleAvatar(
-                        child: Text('# ${index + 1}'),
-                      ),
-                      title: Text('${selectedMeal.steps[index]}'),
+              buildTilteTile(
+                context: context,
+                text: 'Ingredients',
+              ),
+              buildContainer(
+                context: context,
+                child: ListView.builder(
+                  itemCount: selectedMeal.ingredients.length,
+                  itemBuilder: (context, index) => ListTile(
+                    title: Text('${selectedMeal.ingredients[index]}'),
+                    leading: Icon(
+                      Icons.arrow_right,
                     ),
-                    Divider(
-                      height: 5,
-                      color: Colors.red,
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ],
+              buildTilteTile(context: context, text: 'Steps'),
+              buildContainer(
+                context: context,
+                child: ListView.builder(
+                  itemCount: selectedMeal.steps.length,
+                  itemBuilder: (context, index) => Column(
+                    children: [
+                      ListTile(
+                        leading: CircleAvatar(
+                          child: Text('# ${index + 1}'),
+                        ),
+                        title: Text('${selectedMeal.steps[index]}'),
+                      ),
+                      Divider(
+                        height: 5,
+                        color: Colors.red,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(isFavorite(id) ? Icons.star : Icons.star_border),
+        onPressed: () {
+          toggleFavorite(id);
+        },
+        // () {
+        //   Navigator.of(context).pop(id);
+        // },
       ),
     );
   }
